@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.leethcher.roomdemo"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.leethcher.roomdemo"

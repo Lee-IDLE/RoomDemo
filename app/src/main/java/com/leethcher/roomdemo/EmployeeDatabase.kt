@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 @Database(entities = [EmployeeEntity::class], version = 1)
 abstract class EmployeeDatabase: RoomDatabase() {
 
-    abstract  fun employeeDao(): EmployeeDao
+    abstract fun employeeDao(): EmployeeDao
 
     companion object{
         // 휘발성 변수
@@ -20,13 +20,13 @@ abstract class EmployeeDatabase: RoomDatabase() {
                 var instance = INSTANCE
 
                 if(instance == null){
-                    instance = Room .databaseBuilder(context.applicationContext, EmployeeDatabase::class.java, "employee_database")
+                    instance = Room.databaseBuilder(context.applicationContext, EmployeeDatabase::class.java, "employee_database")
                         .fallbackToDestructiveMigration().build()
 
                     INSTANCE = instance
                 }
 
-                return  instance
+                return instance
             }
         }
     }
