@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.leethcher.roomdemo.databinding.ActivityMainBinding
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -16,7 +17,13 @@ class MainActivity : AppCompatActivity() {
 
         val employeeDao = (application as EmployeeApp).db.employeeDao()
         binding.btnAdd.setOnClickListener{
-            addRecord(employeeDao = employeeDao)
+            addRecord(employeeDao)
+        }
+        lifecycleScope.launch {
+            employeeDao.fetchAllEmployees().collect{
+                val list = ArrayList(it)
+                //setupListOfDateIntorecyclerView(list, employeeDao)
+            }
         }
     }
 
