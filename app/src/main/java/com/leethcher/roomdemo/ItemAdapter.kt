@@ -1,6 +1,7 @@
 package com.leethcher.roomdemo
 
 import android.animation.ValueAnimator.AnimatorUpdateListener
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.leethcher.roomdemo.databinding.ItemsRowBinding
@@ -19,14 +20,17 @@ class ItemAdapter(private val items: ArrayList<EmployeeEntity>,
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        TODO("Not yet implemented")
+        return ViewHolder(ItemsRowBinding.inflate(LayoutInflater.from(parent.context)
+            , parent, false))
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return items.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        val context = holder.itemView.context
+        // EmployeeEntity
+        val item = items[position]
     }
 }
