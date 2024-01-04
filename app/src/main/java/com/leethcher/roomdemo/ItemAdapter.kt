@@ -3,12 +3,13 @@ package com.leethcher.roomdemo
 import android.animation.ValueAnimator.AnimatorUpdateListener
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.leethcher.roomdemo.databinding.ItemsRowBinding
 
 class ItemAdapter(private val items: ArrayList<EmployeeEntity>,
-                    private val updateListener: (id: Int) -> Unit,
-                  private val deleteListener: (id: Int) -> Unit
+                    //private val updateListener: (id: Int) -> Unit,
+                  //private val deleteListener: (id: Int) -> Unit
 ) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 
     class ViewHolder(binding: ItemsRowBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -32,5 +33,23 @@ class ItemAdapter(private val items: ArrayList<EmployeeEntity>,
         val context = holder.itemView.context
         // EmployeeEntity
         val item = items[position]
+
+        holder.tvName.text = item.name
+        holder.tvEmail.text = item.email
+
+        if(position % 2 == 0){
+            holder.llMain.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.lightGray))
+        }else{
+            holder.llMain.setBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.white))
+        }
+
+
+        holder.ivEdit.setOnClickListener{
+            //updateListener.invoke(item.id)
+        }
+
+        holder.ivDelete.setOnClickListener{
+            //deleteListener.invoke(item.id)
+        }
     }
 }

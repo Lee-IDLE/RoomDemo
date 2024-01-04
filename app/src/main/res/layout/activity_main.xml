@@ -69,7 +69,7 @@
         android:textSize="18sp"
         android:textStyle="bold"/>
 
-    <!--
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvItemsList"
         android:layout_width="match_parent"
@@ -78,7 +78,7 @@
         android:visibility="visible"
         tools:visibility="visible"
         />
-    -->
+
     <TextView
         android:id="@+id/tvNoRecordsAvailable"
         android:layout_width="match_parent"

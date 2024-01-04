@@ -2,8 +2,11 @@ package com.leethcher.roomdemo
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.leethcher.roomdemo.databinding.ActivityMainBinding
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -25,6 +28,13 @@ class MainActivity : AppCompatActivity() {
                 //setupListOfDateIntorecyclerView(list, employeeDao)
             }
         }
+
+        lifecycleScope.launch {
+            employeeDao.fetchAllEmployees().collect{
+                val list = ArrayList(it)
+                setupListOfDataIntoRecyclerView(list, employeeDao)
+            }
+        }
     }
 
     fun addRecord(employeeDao: EmployeeDao){
@@ -41,6 +51,20 @@ class MainActivity : AppCompatActivity() {
             }
         }else{
             Toast.makeText(applicationContext, "Name or Email cannot be blank", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun setupListOfDataIntoRecyclerView(employeeList: ArrayList<EmployeeEntity>, employeeDao: EmployeeDao){
+        if(employeeList.isNotEmpty()){
+            val itemAdapter = ItemAdapter(employeeList)
+
+            binding.rvItemsList.layoutManager = LinearLayoutManager(this)
+            binding.rvItemsList.adapter = itemAdapter
+            binding.rvItemsList.visibility = View.VISIBLE
+            binding.tvNoRecordsAvailable.visibility = View.GONE
+        }else{
+            binding.rvItemsList.visibility = View.GONE
+            binding.tvNoRecordsAvailable.visibility = View.VISIBLE
         }
     }
 }
