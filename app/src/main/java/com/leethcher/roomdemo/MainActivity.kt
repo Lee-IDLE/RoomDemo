@@ -1,5 +1,6 @@
 package com.leethcher.roomdemo
 
+import android.app.AlertDialog
 import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -58,10 +59,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupListOfDataIntoRecyclerView(employeeList: ArrayList<EmployeeEntity>, employeeDao: EmployeeDao){
         if(employeeList.isNotEmpty()){
-            //val itemAdapter = ItemAdapter(employeeList)
+            // ItemAdapter의 2번째, 3번째 매개변수에 람다함수를 넣었다.
+            // 전달 받는 값은 둘 다 Id로 동일하나 헷갈리지 않도록 이름은 다르게 했다.
+            val itemAdapter = ItemAdapter(employeeList,
+                { updateId ->
+                    updateRecordDialog(updateId, employeeDao)
+                },
+                {deleteId ->
+                    deleteRecordAlertDialog(deleteId, employeeDao)
+                }
+            )
 
             binding.rvItemsList.layoutManager = LinearLayoutManager(this)
-            //binding.rvItemsList.adapter = itemAdapter
+            binding.rvItemsList.adapter = itemAdapter
             binding.rvItemsList.visibility = View.VISIBLE
             binding.tvNoRecordsAvailable.visibility = View.GONE
         }else{
@@ -71,7 +81,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateRecordDialog(id: Int, employeeDao: EmployeeDao) {
-        val updateDialog = Dialog(this@MainActivity)
+        val updateDialog = Dialog(this@MainActivity, R.style.Theme_Dialog)
         // 다른 곳을 눌러 취소할 수 없다
         updateDialog.setCancelable(false)
         val binding = DialogUpdateBinding.inflate(layoutInflater)
@@ -103,5 +113,28 @@ class MainActivity : AppCompatActivity() {
         }
 
         updateDialog.show();
+    }
+
+    private fun deleteRecordAlertDialog(id: Int, employeeDao: EmployeeDao) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Delete Record")
+        builder.setIcon(android.R.drawable.ic_dialog_alert)
+
+        builder.setPositiveButton("Yes"){dialogInterface, _ ->
+            lifecycleScope.launch {
+                employeeDao.delete(EmployeeEntity(id))
+                Toast.makeText(applicationContext, "Record deleted successfully.",
+                    Toast.LENGTH_LONG).show()
+            }
+            dialogInterface.dismiss()
+        }
+
+        builder.setNegativeButton("No"){dialogInterface, _ ->
+            dialogInterface.dismiss()
+        }
+
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCancelable(false)
+        alertDialog.show()
     }
 }
