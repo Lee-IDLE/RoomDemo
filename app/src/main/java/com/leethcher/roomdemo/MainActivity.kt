@@ -1,5 +1,6 @@
 package com.leethcher.roomdemo
 
+import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -8,6 +9,7 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.leethcher.roomdemo.databinding.ActivityMainBinding
+import com.leethcher.roomdemo.databinding.DialogUpdateBinding
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -56,15 +58,50 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupListOfDataIntoRecyclerView(employeeList: ArrayList<EmployeeEntity>, employeeDao: EmployeeDao){
         if(employeeList.isNotEmpty()){
-            val itemAdapter = ItemAdapter(employeeList)
+            //val itemAdapter = ItemAdapter(employeeList)
 
             binding.rvItemsList.layoutManager = LinearLayoutManager(this)
-            binding.rvItemsList.adapter = itemAdapter
+            //binding.rvItemsList.adapter = itemAdapter
             binding.rvItemsList.visibility = View.VISIBLE
             binding.tvNoRecordsAvailable.visibility = View.GONE
         }else{
             binding.rvItemsList.visibility = View.GONE
             binding.tvNoRecordsAvailable.visibility = View.VISIBLE
         }
+    }
+
+    private fun updateRecordDialog(id: Int, employeeDao: EmployeeDao) {
+        val updateDialog = Dialog(this@MainActivity)
+        // 다른 곳을 눌러 취소할 수 없다
+        updateDialog.setCancelable(false)
+        val binding = DialogUpdateBinding.inflate(layoutInflater)
+        updateDialog.setContentView(binding.root)
+
+        lifecycleScope.launch {
+            employeeDao.fetchEmployeeById(id).collect{
+                binding.etName.setText(it.name)
+                binding.etEmail.setText(it.email)
+            }
+        }
+
+        binding.tvUpdate.setOnClickListener{
+            val name = binding.etName.text.toString()
+            val email = binding.etEmail.text.toString()
+
+            if(name.isNotEmpty() && email.isNotEmpty()){
+                lifecycleScope.launch {
+                    employeeDao.update(EmployeeEntity(id, name, email))
+                    Toast.makeText(applicationContext, "Record Updated.", Toast.LENGTH_LONG).show()
+                    updateDialog.dismiss()
+                }
+            }else{
+                Toast.makeText(applicationContext, "Name or Email cannot be blank", Toast.LENGTH_LONG).show()
+            }
+        }
+        binding.tvCancel.setOnClickListener{
+            updateDialog.dismiss()
+        }
+
+        updateDialog.show();
     }
 }
